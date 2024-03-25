@@ -22,27 +22,30 @@ EXTERNAL_CLIENT = MongoClient(EXTERNAL_URI, server_api=ServerApi('1'))
 # Send a ping to confirm a successful connection
 try:
     EXTERNAL_CLIENT.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to EXTERNAL DATA RESOURCES")
+    print("Pinged your deployment. You successfully connected to EXTERNAL DATA RESOURCES DB")
 except Exception as e:
     print(e)
 
+external_db = EXTERNAL_CLIENT.cirotex
 
-DATALAKE_USER = os.getenv('DATALAKE_USER')
-DATALAKE_PASSWORD = os.getenv('DATALAKE_PASSWORD')
-DATALAKE_HOST = os.getenv('DATALAKE_HOST')
+ETL_USER = os.getenv('DATALAKE_USER')
+ETL_PASSWORD = os.getenv('DATALAKE_PASSWORD')
+ETL_HOST = os.getenv('DATALAKE_HOST')
 
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
-DATALAKE_URI = f"mongodb+srv://{DATALAKE_USER}:{DATALAKE_PASSWORD}@{DATALAKE_HOST}/?retryWrites=true&w=majority"
+ETL_URI = f"mongodb+srv://{ETL_USER}:{ETL_PASSWORD}@{ETL_HOST}/?retryWrites=true&w=majority"
 
 # Create a new client and connect to the server
-DATALAKE_CLIENT = MongoClient(DATALAKE_URI)
+ETL_CLIENT = MongoClient(ETL_URI)
 
 # Send a ping to confirm a successful connection
 try:
-    DATALAKE_CLIENT.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to DATALAKE!")
+    ETL_CLIENT.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to ETL DB")
 except Exception as e:
     print(e)
 
+inhouse_datalake_db = ETL_CLIENT.inHouseDataLake
+datawarehouse_db = ETL_CLIENT.warehouse

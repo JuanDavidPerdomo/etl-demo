@@ -1,7 +1,6 @@
-import os
 from bson import ObjectId
 from datetime import datetime, timedelta, timezone
-from conn.conn import EXTERNAL_CLIENT
+from conn.conn import external_db, inhouse_datalake_db
 
 
 
@@ -10,8 +9,8 @@ from conn.conn import EXTERNAL_CLIENT
 def external_source_extraction_data():    
     
     try: 
-        external_db = EXTERNAL_CLIENT.cirotex
         external_orders_collection = external_db.orders
+        datalake_collection = inhouse_datalake_db.orders
 
         #array in memory to temporary persist fetched data
         external_orders_fetched = []
@@ -113,10 +112,9 @@ def external_source_extraction_data():
 
         if len(external_orders_fetched) != 0:
             print(external_orders_fetched[0])
+            datalake_collection.insert_many(external_orders_fetched)
 
-        
-
-        return print(len(external_orders_fetched))
+        return print(f'{len(external_orders_fetched)} documentos extraídos a las {current_hour}')
     
     except Exception as e:
         print(f'se ha presentado el siguiente error {str(e)}')
