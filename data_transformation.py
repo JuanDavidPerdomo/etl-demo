@@ -39,17 +39,18 @@ def tz_transform(dataframe, datetime_collumn_name):
     return dataframe
 
 
-def external_source_extraction_data():
+def data_cleaning_process():
 
     try:
         master_collection = datawarehouse_db.cleanMasterSalesCollection
         utc_timezone = timezone.utc
+        datalake_orders_raw_data = datalake_orders_extraction_data()
+        datalake_references_raw_data = datalake_references_extraction_data()
+        datalake_categories_raw_data = datalake_categories_extraction_data()
+        datalake_shops_raw_data = datalake_shops_extraction_data()
 
         if (
             (not datalake_orders_raw_data)
-            or (not datalake_references_raw_data)
-            or (not datalake_categories_raw_data)
-            or (not datalake_shops_raw_data)
         ):
             print(
                 "Alguno de las listas proviene vacía, por lo que no es posible ejecutar el resto del proceso"
@@ -61,10 +62,7 @@ def external_source_extraction_data():
                 shops_df = pd.read_csv(datalake_shops_raw_data)
                 orders_df = pd.read_json(datalake_orders_raw_data)
 
-                datalake_orders_raw_data = datalake_orders_extraction_data()
-                datalake_references_raw_data = datalake_references_extraction_data()
-                datalake_categories_raw_data = datalake_categories_extraction_data()
-                datalake_shops_raw_data = datalake_shops_extraction_data()
+
 
                 filtered_orders = orders_df.copy()
                 filtered_orders = filtered_orders.loc[
@@ -160,8 +158,20 @@ def external_source_extraction_data():
         master_collection.insert_many(df_json)
 
         return print(
-            f"{len(df_json)} documentos extraídos a las {datetime.now(utc_timezone)}"
+            f"{len(df_json)} documentos insertados a las {datetime.now(utc_timezone)}"
         )
-    
+
     except Exception as e:
         print(f"se ha presentado el siguiente error {str(e)}")
+
+
+def cronjob_log():
+    try:
+        utc_timezone = pytz.timezone('America/Bogota')
+        col_hour = datetime.now(utc_timezone)
+        message = "im still working"
+        cronjob_collection = datawarehouse_db.cronjobsHealthyLogs
+        cronjob_collection.insert_one({}, {'$set': {'cron_report': col_hour, 'message': message}})
+    except Exception as e:
+        print(f"se ha presentado el siguiente error {str(e)}")
+    return print(f'ejecución realizada a las : {col_hour} en UTC-5')
