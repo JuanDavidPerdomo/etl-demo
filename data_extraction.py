@@ -106,14 +106,11 @@ def external_source_extraction_data():
             datalake_collection.insert_many(external_orders_fetched)
 
         return print(
-            f"{len(external_orders_fetched)} documentos extraídos a las {current_hour}"
+            f"{len(external_orders_fetched)} documentos extraídos de la fuenta externa a las {current_hour}"
         )
 
     except Exception as e:
         print(f"se ha presentado el siguiente error {str(e)}")
-
-
-external_source_extraction_data()
 
 
 def datalake_orders_extraction_data():
@@ -125,13 +122,15 @@ def datalake_orders_extraction_data():
         datalake_orders_fetched = []
 
         utc_timezone = timezone.utc
-        current_hour = datetime.now(utc_timezone).replace(
-            minute=0, second=0, microsecond=0
-        )
-        previous_hour = current_hour - timedelta(hours=1)
+        # current_hour = datetime.now(utc_timezone).replace(
+        #     minute=0, second=0, microsecond=0
+        # )
+        # previous_hour = current_hour - timedelta(hours=1)
+        current_hour = datetime(2024, 3, 26, 22, 0, 0, tzinfo=timezone.utc)
+        previous_hour = previous_hour = datetime(2024, 3, 26, 21, 0, 0, tzinfo=timezone.utc)
 
         datalake_orders_extraction_pipeline = [
-            {"$match": {"closeDate": {"$gte": previous_hour, "$lt": current_hour}}}
+            {"$match": {"venta_utc": {"$gte": previous_hour, "$lt": current_hour}}}
         ]
 
         external_orders_fetched_result = orders_collection.aggregate(
@@ -143,7 +142,7 @@ def datalake_orders_extraction_data():
             datalake_orders_fetched.append(datalake_order)
 
         print(
-            f"{len(datalake_orders_fetched)} documentos extraídos a las {current_hour}"
+            f"{len(datalake_orders_fetched)} documentos extraídos de orders datalake a las {current_hour}"
         )
 
         return datalake_orders_fetched
@@ -156,11 +155,29 @@ def datalake_categories_extraction_data():
     try:
         utc_timezone = timezone.utc
         categories_collection = inhouse_datalake_db.categories
+        datalake_categories_fetched = []
 
-        # array in memory to temporary persist fetched data
-        datalake_categories_fetched = [categories_collection.find({})]
+        datalake_categories_extraction_pipeline = [
+    {
+        '$match': {
+            'createdAt': {
+                '$gte': datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+            }
+        }
+    }, {
+        '$project': {
+            'name': 1
+        }
+    }
+]
+        categories_fetched_result = categories_collection.aggregate(
+            datalake_categories_extraction_pipeline, cursor={}
+        )
+        
+        for datalake_categorie in categories_fetched_result:
+            datalake_categories_fetched.append(datalake_categorie)
         print(
-            f"{len(datalake_categories_fetched)} documentos extraídos a las {datetime.now(utc_timezone)}"
+            f"{len(datalake_categories_fetched)} documentos extraídos de la collección de cateogorías a las {datetime.now(utc_timezone)}"
         )
 
         return datalake_categories_fetched
@@ -174,11 +191,31 @@ def datalake_references_extraction_data():
     try:
         utc_timezone = timezone.utc
         references_collection = inhouse_datalake_db.references
+        datalake_references_fetched = []
 
-        # array in memory to temporary persist fetched data
-        datalake_references_fetched = [references_collection.find({})]
+        datalake_references_extraction_pipeline = [
+    {
+        '$match': {
+            'createdAt': {
+                '$gte': datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+            }
+        }
+    }, {
+        '$project': {
+            'categoryLevel1': 1, 
+            'name': 1
+        }
+    }
+]
+        references_fetched_result = references_collection.aggregate(
+            datalake_references_extraction_pipeline, cursor={}
+        )
+        
+        for datalake_reference in references_fetched_result:
+            datalake_references_fetched.append(datalake_reference)
+        
         print(
-            f"{len(datalake_references_fetched)} documentos extraídos a las {datetime.now(utc_timezone)}"
+            f"{len(datalake_references_fetched)} documentos extraídos de la colección de referencias a las {datetime.now(utc_timezone)}"
         )
 
         return datalake_references_fetched
@@ -191,11 +228,30 @@ def datalake_shops_extraction_data():
     try:
         utc_timezone = timezone.utc
         shops_collection = inhouse_datalake_db.shops
+        datalake_shops_fetched = []
 
-        # array in memory to temporary persist fetched data
-        datalake_shops_fetched = [shops_collection.find({})]
+        datalake_shops_extraction_pipeline = [
+    {
+        '$match': {
+            'createdAt': {
+                '$gte': datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+            }
+        }
+    }, {
+        '$project': {
+            'name': 1
+        }
+    }
+]
+
+        shops_fetched_result = shops_collection.aggregate(
+            datalake_shops_extraction_pipeline, cursor={}
+        )
+        
+        for datalake_shop in shops_fetched_result:
+            datalake_shops_fetched.append(datalake_shop)
         print(
-            f"{len(datalake_shops_fetched)} documentos extraídos a las {datetime.now(utc_timezone)}"
+            f"{len(datalake_shops_fetched)} documentos extraídos de la colección de tiendas a las {datetime.now(utc_timezone)}"
         )
 
         return datalake_shops_fetched

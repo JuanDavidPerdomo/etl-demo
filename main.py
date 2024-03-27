@@ -10,8 +10,10 @@ app = FastAPI()
 
 app.include_router(events_router)
 
-scheduler = BackgroundScheduler(timezone='UTC')
-scheduler.add_job(external_source_extraction_data, trigger=IntervalTrigger(hours=1, minutes=1))
-scheduler.add_job(data_cleaning_process, trigger=IntervalTrigger(hours=1, minutes=1))
-scheduler.add_job(cronjob_log, trigger=IntervalTrigger(minutes=1))
-scheduler.start()
+# scheduler = BackgroundScheduler(timezone='UTC')
+# scheduler.add_job(external_source_extraction_data, trigger=IntervalTrigger(hours=1, minutes=1))
+# scheduler.add_job(data_cleaning_process, trigger=IntervalTrigger(hours=1, minutes=1))
+# scheduler.add_job(cronjob_log, trigger=IntervalTrigger(minutes=1))
+# scheduler.start()
+
+data_cleaning_process()
