@@ -152,7 +152,7 @@ def cronjob_log():
         col_hour = datetime.now(utc_timezone)
         message = "im still working"
         cronjob_collection = datawarehouse_db.cronjobsHealthyLogs
-        cronjob_collection.insert_one({}, {'$set': {'cron_report': col_hour, 'message': message}})
+        cronjob_collection.insert_one({}, {'cron_report': col_hour, 'message': message})
     except Exception as e:
         print(f"se ha presentado el siguiente error {str(e)}")
     return print(f'ejecución realizada a las : {col_hour} en UTC-5')
