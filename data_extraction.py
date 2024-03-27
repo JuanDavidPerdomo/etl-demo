@@ -122,12 +122,10 @@ def datalake_orders_extraction_data():
         datalake_orders_fetched = []
 
         utc_timezone = timezone.utc
-        # current_hour = datetime.now(utc_timezone).replace(
-        #     minute=0, second=0, microsecond=0
-        # )
-        # previous_hour = current_hour - timedelta(hours=1)
-        current_hour = datetime(2024, 3, 26, 22, 0, 0, tzinfo=timezone.utc)
-        previous_hour = previous_hour = datetime(2024, 3, 26, 21, 0, 0, tzinfo=timezone.utc)
+        current_hour = datetime.now(utc_timezone).replace(
+            minute=0, second=0, microsecond=0
+        )
+        previous_hour = current_hour - timedelta(hours=1)
 
         datalake_orders_extraction_pipeline = [
             {"$match": {"venta_utc": {"$gte": previous_hour, "$lt": current_hour}}}
