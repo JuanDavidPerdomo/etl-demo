@@ -156,22 +156,19 @@ def datalake_categories_extraction_data():
         datalake_categories_fetched = []
 
         datalake_categories_extraction_pipeline = [
-    {
-        '$match': {
-            'createdAt': {
-                '$gte': datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
-            }
-        }
-    }, {
-        '$project': {
-            'name': 1
-        }
-    }
-]
+            {
+                "$match": {
+                    "createdAt": {
+                        "$gte": datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+                    }
+                }
+            },
+            {"$project": {"name": 1}},
+        ]
         categories_fetched_result = categories_collection.aggregate(
             datalake_categories_extraction_pipeline, cursor={}
         )
-        
+
         for datalake_categorie in categories_fetched_result:
             datalake_categories_fetched.append(datalake_categorie)
         print(
@@ -192,26 +189,22 @@ def datalake_references_extraction_data():
         datalake_references_fetched = []
 
         datalake_references_extraction_pipeline = [
-    {
-        '$match': {
-            'createdAt': {
-                '$gte': datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
-            }
-        }
-    }, {
-        '$project': {
-            'categoryLevel1': 1, 
-            'name': 1
-        }
-    }
-]
+            {
+                "$match": {
+                    "createdAt": {
+                        "$gte": datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+                    }
+                }
+            },
+            {"$project": {"categoryLevel1": 1, "name": 1}},
+        ]
         references_fetched_result = references_collection.aggregate(
             datalake_references_extraction_pipeline, cursor={}
         )
-        
+
         for datalake_reference in references_fetched_result:
             datalake_references_fetched.append(datalake_reference)
-        
+
         print(
             f"{len(datalake_references_fetched)} documentos extraídos de la colección de referencias a las {datetime.now(utc_timezone)}"
         )
@@ -229,23 +222,20 @@ def datalake_shops_extraction_data():
         datalake_shops_fetched = []
 
         datalake_shops_extraction_pipeline = [
-    {
-        '$match': {
-            'createdAt': {
-                '$gte': datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
-            }
-        }
-    }, {
-        '$project': {
-            'name': 1
-        }
-    }
-]
+            {
+                "$match": {
+                    "createdAt": {
+                        "$gte": datetime(2022, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+                    }
+                }
+            },
+            {"$project": {"name": 1}},
+        ]
 
         shops_fetched_result = shops_collection.aggregate(
             datalake_shops_extraction_pipeline, cursor={}
         )
-        
+
         for datalake_shop in shops_fetched_result:
             datalake_shops_fetched.append(datalake_shop)
         print(

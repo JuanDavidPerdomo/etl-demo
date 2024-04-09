@@ -33,7 +33,9 @@ ETL_USER = os.getenv("ETL_USER")
 ETL_PASSWORD = os.getenv("ETL_PASSWORD")
 ETL_HOST = os.getenv("ETL_HOST")
 
-ETL_URI = f"mongodb+srv://{ETL_USER}:{ETL_PASSWORD}@{ETL_HOST}/?retryWrites=true&w=majority"
+ETL_URI = (
+    f"mongodb+srv://{ETL_USER}:{ETL_PASSWORD}@{ETL_HOST}/?retryWrites=true&w=majority"
+)
 
 # Create a new client and connect to the server
 ETL_CLIENT = MongoClient(ETL_URI)
